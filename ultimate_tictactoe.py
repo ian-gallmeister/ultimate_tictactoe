@@ -59,6 +59,10 @@ class ultimate_tictactoe():
   def __init__( self ):
     self.games = [ tictactoe() for i in range(9) ]
 
+  def play( self ):
+    while True:
+      self.one_turn()
+
   def select_int( self, message ):
     while True:
       if sys.version_info[0] == 2:
@@ -99,7 +103,8 @@ class ultimate_tictactoe():
     self.small_game = self.games[self.small_game].one_turn()
     print()
     self.games[self.small_game].is_winning()
-    self.is_winning()
+    if self.is_winning():
+      exit()
     self.swap_players()
       
   def is_winning( self ):
