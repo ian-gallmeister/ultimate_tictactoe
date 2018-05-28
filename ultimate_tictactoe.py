@@ -41,16 +41,6 @@ import sys
 
 """
 
-#Turn
-# Draw big board
-# If prev choice leads to completed board
-#  Find out which small_games are won, create small board with those selected in case it is needed
-#  Ask user to choose a board
-# Draw small board
-# Run turn on small board, saving selection
-# Check if has won small game - if so, break
-# Change user and repeat
-
 class ultimate_tictactoe():
   first_last = '            |             |'
   intermediate = '            |             |\n----------------------------------------\n            |             |'
@@ -59,6 +49,9 @@ class ultimate_tictactoe():
   smallseparator = '-----------'
   big_x = [ '   \   /', '    \ / ', '     X  ', '    / \ ', '   /   \\' ]
   big_o = [ '     _  ', '    / \ ', '   |   |', '   |   |', '    \_/ ' ]
+  winning_combos = [ [0,1,2], [3,4,5], [6,7,8], #Horizontal
+                     [0,3,6], [1,4,7], [2,5,8], #Vertical
+                     [0,4,8], [2,4,6] ]         #Diagonal
 
   #Bottom left first, to the right and up
   current_player = 'X'
@@ -66,17 +59,30 @@ class ultimate_tictactoe():
   def __init__( self ):
     self.games = [ tictactoe() for i in range(9) ]
 
+  def select_int( self, message ):
+    while True:
+      if sys.version_info[0] == 2:
+        char = raw_input( message + ' ' )
+      else:
+        char = input( message + ' ' )
+      if self.validate( char ):
+        return ( int(char) - 1 )
+
   def one_turn( self ):
     #Draw big board
     self.draw()
+
     #First turn.  Select small game then select a spot on small game
     if self.small_game == None:
-      if sys.version_info[0] == 2:
-        char = raw_input( 'No small game has been selected.  Please select one using the small board as a reference: ' )
-      else:
-        print( 'No small game has been selected.  Using the small board as a reference,' )
-        char = input( 'please select a game to start from: ' )
-    # If prev choice leads to completed board
+      msg = 'No inner game chosen.  Please select one using a small board as a reference: '
+      print( '\n\n' + 2*self.smallseparator + '\n\n' )
+      tictactoe().draw()
+      print( '\n\n' )
+      self.small_game = self.select_int( msg ) 
+
+    self.games[self.small_game].current_player = self.current_player
+          
+    # prev choice leads to completed board
     if self.games[self.small_game].winner != None:
       #Find which small_games are won, create small board to match 
       tmp = tictactoe()
@@ -86,24 +92,23 @@ class ultimate_tictactoe():
         elif self.games.winner == 'O':
           tmp.values[_] = 'O'
       tmp.draw()
-      # Ask user to choose a board
       print( "Your next move would be in a completed board.  Please select the next board to move from." )
       self.small_game = tmp.select()
-    # Draw small board
-    self.games[self.small_game].draw()
-    # Run turn on small board, saving selection
+
+    print()
     self.small_game = self.games[self.small_game].one_turn()
-    # Check if has won small game
+    print()
     self.games[self.small_game].is_winning()
-    # Check if has won big game
     self.is_winning()
     self.swap_players()
       
   def is_winning( self ):
     for combo in self.winning_combos:
       #If a combo has won, return True, congratulate winner
-      if self.values[combo[0]] == self.values[combo[1]] == self.values[combo[2]]:
-        self.winner = self.values[combo[0]]
+      if None in [ self.games[_].winner for _ in combo ]:
+        continue
+      elif self.games[combo[0]].winner == self.games[combo[1]].winner == self.games[combo[2]].winner:
+        self.winner = self.games[combo[0]].winner
         print( '{win} WINS!  Congrats!'.format(win=self.winner) )
         return True
     return False #Only gets here if no winners
@@ -155,18 +160,12 @@ class ultimate_tictactoe():
       self.current_player = 'X'
   
   def validate( self, char ):
-    #Eliminate non-digits
     if not char.isdigit():
       print( 'Please enter an integer\n', file=sys.stderr )
       return False
-    #Elimintate digits < 1 and > 9
     char = int(char)
     if char < 1 or char > 9:
       print( 'Please enter an integer from 1 to 9\n', file=sys.stderr )
-      return False
-    #Eliminate already-chosen characters
-    if self.values[ char - 1 ] in ['X', 'O']:
-      print( 'That spot has already been taken.\n', file=sys.stderr )
       return False
     return True
 

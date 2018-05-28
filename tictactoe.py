@@ -46,7 +46,7 @@ class tictactoe():
     number = self.select()
     self.is_winning()
     self.swap_players()
-    return number 
+    return (number-1)
 
   def draw( self ):
     row1 = self.play_line.format( self.values[6], self.values[7], self.values[8] )
