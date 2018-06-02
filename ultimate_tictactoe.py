@@ -81,7 +81,7 @@ class ultimate_tictactoe():
       msg = 'No inner game chosen.  Please select one using a small board as a reference: '
       print( '\n\n' + 2*self.smallseparator + '\n\n' )
       tictactoe().draw()
-      print( '\n\n' )
+      print( )
       self.small_game = self.select_int( msg ) 
 
     self.games[self.small_game].current_player = self.current_player
@@ -90,17 +90,18 @@ class ultimate_tictactoe():
     if self.games[self.small_game].winner != None:
       #Find which small_games are won, create small board to match 
       tmp = tictactoe()
-      for _ in range(self.games):
-        if self.games.winner == 'X':
+      for _ in range(len(self.games)):
+        if self.games[_].winner == 'X':
           tmp.values[_] = 'X'
-        elif self.games.winner == 'O':
+        elif self.games[_].winner == 'O':
           tmp.values[_] = 'O'
-      tmp.draw()
       print( "Your next move would be in a completed board.  Please select the next board to move from." )
-      self.small_game = tmp.select()
+      print( "The small board below shows where any games have been won.  Please choose a a free one" )
+      tmp.draw()
+      self.small_game = tmp.select( self.current_player )
 
     print()
-    self.small_game = self.games[self.small_game].one_turn()
+    self.small_game = self.games[self.small_game].one_turn( self.current_player )
     print()
     self.games[self.small_game].is_winning()
     if self.is_winning():

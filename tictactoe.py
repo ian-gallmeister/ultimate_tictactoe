@@ -41,9 +41,9 @@ class tictactoe():
         break
       self.swap_players()
       
-  def one_turn( self ):
+  def one_turn( self, cp ):
     self.draw()
-    number = self.select()
+    number = self.select( cp )
     self.is_winning()
     self.swap_players()
     return (number-1)
@@ -64,16 +64,16 @@ class tictactoe():
         return True
     return False #Only gets here if no winners
 
-  def select( self ):
+  def select( self, cp ):
     #Select spot 
     while True:
       #Prevent stupidity
       if sys.version_info[0] == 2: #For old python
-        char = raw_input( 'Player: {}\nPlease select an open spot: '.format(self.current_player) )
+        char = raw_input( '\nPlayer: {}\nPlease select an open spot: '.format(cp) )
       else: #For sensible python
-        char = input( 'Player: {}\nPlease select an open spot: '.format(self.current_player) )
+        char = input( '\nPlayer: {}\nPlease select an open spot: '.format(cp) )
       if self.validate( char ):
-        self.values[ int(char) - 1 ] = self.current_player #Uhhh ... keep track of this
+        self.values[ int(char) - 1 ] = cp #Uhhh ... keep track of this
         break
     return int(char)
 
