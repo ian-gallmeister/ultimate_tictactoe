@@ -1,5 +1,7 @@
 ## DOES NOT WORK YET
 
+Moved to gitlab.com/ian_g
+
 Ultimate Tic Tac Toe
 Based on my tictactoe repo
 
